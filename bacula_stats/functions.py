@@ -1,17 +1,16 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-import re
-import os
-import sys
-import os
 import logging
+import os
+import re
+import sys
 import traceback
-from subprocess import Popen,PIPE
 from collections import defaultdict
+from subprocess import Popen,PIPE
 
 import fnmatch
-import yaml
 import psycopg2
+import yaml
 from six import iteritems
 from voluptuous import Schema, Required, All, Length, Range, MultipleInvalid
 
@@ -19,7 +18,7 @@ logger = logging.getLogger(__name__)
 
 
 def client_fileset_size(dict):
-    """ dict looks like: {'Full-ST': [(1,2,3), (2,3,4)], 'Incremental-ST': [(3,4,5), (4,5,6)] """
+    """Dict looks like: {'Full-ST': [(1,2,3), (2,3,4)], 'Incremental-ST': [(3,4,5), (4,5,6)] """
     tuple_list = list()
     gigabytes = float()
     for pk, pv in iteritems(dict):
@@ -29,10 +28,11 @@ def client_fileset_size(dict):
 
 
 def validate_yaml():
-    BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
-    logger.debug(BASE_DIR)
-    with open(os.path.join(CURRENT_DIR,"bm.conf"), 'r') as stream:
+    CONFIG = "/etc/bacula_stats.conf"
+    if not os.path.isfile(CONFIG):
+        log.error("Please create /etc/bacula_stats.conf. See config example on https://github.com/eayin2/bacula_stats"
+        sys.exit()
+    with open(os.path.join(CONFIG), 'r') as stream:
         yaml_parsed = yaml.load(stream)
     schema = Schema({
         Required('bacula_config_path'): str,
@@ -53,7 +53,7 @@ port = str(yaml_parsed["port"])
 
 
 def bacula_config_files():
-    """ returns all files found in bacula_config_path recursively. """
+    """Return all files found in bacula_config_path recursively. """
     files = []
     for root, dirnames, filenames in os.walk(bacula_config_path):
         for filename in fnmatch.filter(filenames, '*.conf'):
@@ -62,7 +62,7 @@ def bacula_config_files():
     return files
 
 def config_values(d):
-    """ tries to get values for mulitple keys and sets value None if key is not existent. keys and values are packed and returns as dict."""
+    """Trie to get values for mulitple keys and set value None if key is not existent. Keys and values are packed and returned as dict."""
     d = {k.lower():v for k,v in iteritems(d)}
     client = d.get("client", None)
     fileset = d.get("fileset", None)
@@ -81,7 +81,7 @@ def config_values(d):
     return cvl
 
 def jobdefs_conf_values(jobdef_name):
-    """ parses jobdefs.conf and returns values for keys defined in config_values()."""
+    """Parse jobdefs.conf and return values for keys defined in config_values()."""
     files = bacula_config_files()
     for file in files:
         with open (file, "r") as myfile:
@@ -95,7 +95,7 @@ def jobdefs_conf_values(jobdef_name):
 
 
 def parse_bacula(lines):
-    """ can parse bacula configs and returns a list of each config segment packed in one dictionary. """
+    """Parse bacula config and return a list of each config segment packed in one dictionary."""
     parsed = []
     obj = None
     for line in lines:
