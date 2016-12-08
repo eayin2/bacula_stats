@@ -5,8 +5,8 @@ from six import iteritems
 from tabulate import tabulate
 from termcolor import colored, cprint
 
-from functions import gb_to_tb, client_fileset_size
-from views import all_backups, recent
+from .functions import gb_to_tb, client_fileset_size
+from .views import all_backups, recent
 
 
 def _all_backups():
@@ -16,8 +16,8 @@ def _all_backups():
     hosts = r["hosts"]
     totalsize = gb_to_tb(r["total_size"])
     print("Total size (TB): %s" % totalsize)
-    
     for jck, jcv in iteritems(jobs):
+        print(colored(jck, "white", attrs=["bold"]))
         for jfk, jfv in iteritems(jcv):
             for ck, cv in iteritems(hosts):
                 if jck == ck:
@@ -75,9 +75,9 @@ def _recent():
 
 def clidoor():
     parser = argparse.ArgumentParser(description="bacula_stats - Display recent and all backups.")
-    parser.add_argument("-a","--all", action="store_true", help="Return all backups.", required=False)
-    parser.add_argument("-r","--recent", action="store_true", help="Return recent backups", required=False)
-    args = vars(parser.parse_args())   
+    parser.add_argument("-a", "--all", action="store_true", help="Return all backups.", required=False)
+    parser.add_argument("-r", "--recent", action="store_true", help="Return recent backups", required=False)
+    args = vars(parser.parse_args())
     if args["recent"]:
         _recent()
     elif args["all"]:
