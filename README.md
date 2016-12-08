@@ -27,7 +27,7 @@ optional arguments:
   -a, --all     Return all backups.                                                                                                                                                            
   -r, --recent  Return recent backups
 ```
-Preferably pipe bacula_stats to `less` to have scroll conveniently through your backup stats:
+Preferably pipe bacula_stats to `less` to scroll conveniently through your backup stats:
 `bacula_stats |less -R --tilde`
 In your .bashrc put:
 ```
