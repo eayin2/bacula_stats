@@ -12,6 +12,7 @@ from collections import defaultdict
 import fnmatch
 import yaml
 import psycopg2
+from helputils.core import log
 from six import iteritems
 from voluptuous import Schema, Required, All, Length, Range, MultipleInvalid
 
@@ -34,7 +35,10 @@ def client_fileset_size(dict):
 
 def validate_yaml():
     CONFIGPATH = "/etc/bacula_stats.conf"
-    with open(CONFIGPATH), "r") as stream:
+    if not os.path.isfile(CONFIGPATH):
+        log.error("Provide /etc/bacula_stats.conf. See example config on https://github.com/eayin2/bacula_stats. Exiting.")
+        sys.exit()
+    with open((CONFIGPATH), "r") as stream:
         yaml_parsed = yaml.load(stream)
     schema = Schema({
         Required('bacula_config_path'): str,
