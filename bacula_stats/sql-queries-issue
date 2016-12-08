@@ -1,0 +1,17 @@
+# april 2016:
+# with volumename it shows a few dupe entries, not because the sql query is wrong, but because there are actually jobs
+# with two volumes, though i explicitly set `Maximum Volume Jobs = 1`. i checked the volumes and both volumes exist,
+# but one of the volumes has very few bytes and no data is inside. so this must be some sort of bug which results into
+# orphan media entries and orphan volume files. check this later out and ignore it for now
+
+                     SELECT DISTINCT j.jobid, c.name, p.name, j.jobbytes, j.realendtime, j.starttime, j.jobfiles, 
+                     f.fileset, m.volumename
+                     FROM client c, job j, fileset f, pool p, media m, jobmedia jm
+                     WHERE j.jobstatus IN ('T', 'W') AND j.level IN ('F', 'I', 'D') AND j.type IN ('B', 'C')
+                     AND j.clientid=c.clientid AND j.poolid=p.poolid AND j.filesetid=f.filesetid AND
+                     jm.mediaid=m.mediaid AND jm.jobid=j.jobid;
+
+                     SELECT j.jobid, c.name, p.name, j.jobbytes, j.realendtime, j.starttime, j.jobfiles, f.fileset
+                     FROM client c, job j, fileset f, pool p
+                     WHERE j.jobstatus IN ('T', 'W') AND j.level IN ('F', 'I', 'D') AND j.type IN ('B', 'C')
+                     AND j.clientid=c.clientid AND j.poolid=p.poolid AND j.filesetid=f.filesetid;
