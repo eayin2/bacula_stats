@@ -10,6 +10,12 @@ bacula_stats is the CLI version of bacula_monitor. It is easier deployable, dist
 bacula_monitor.
 
 
+## Install
+`pip3 install bacula_stats`
+
+## Configuration
+See etc/bacula_stats.conf as an example for your config file.
+
 ## Usage
 ```
 usage: bacula_stats [-h] [-a] [-r]                                                                                                                                                             
@@ -21,6 +27,3 @@ optional arguments:
   -a, --all     Return all backups.                                                                                                                                                            
   -r, --recent  Return recent backups
 ```
-
-## Configuration
-See bm.conf example config file for available settings.
