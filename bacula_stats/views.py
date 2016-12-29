@@ -23,17 +23,17 @@ except:
     _timeouts = 30
 
 recent_qry = ("""
-SELECT c.name, p.name, j.jobbytes, j.realendtime, j.starttime, j.jobfiles, f.fileset
-FROM client c
-LEFT JOIN (
-    SELECT DISTINCT ON (j.clientid, j.poolid, j.filesetid)
-    j.jobbytes, j.realendtime, j.clientid, j.poolid, j.starttime, j.jobfiles, j.type, j.level, j.jobstatus, j.filesetid
-    FROM job j
-    WHERE j.jobstatus IN ('T', 'W') AND j.level IN ('F', 'I', 'D') AND j.type IN ('B', 'C')
-    ORDER BY j.clientid, j.poolid, j.filesetid, j.realendtime DESC
+    SELECT c.name, p.name, j.jobbytes, j.realendtime, j.starttime, j.jobfiles, f.fileset
+    FROM client c
+    LEFT JOIN (
+        SELECT DISTINCT ON (j.clientid, j.poolid, j.filesetid)
+        j.jobbytes, j.realendtime, j.clientid, j.poolid, j.starttime, j.jobfiles, j.type, j.level, j.jobstatus, j.filesetid
+        FROM job j
+        WHERE j.jobstatus IN ('T', 'W') AND j.level IN ('F', 'I', 'D') AND j.type IN ('B', 'C')
+        ORDER BY j.clientid, j.poolid, j.filesetid, j.realendtime DESC
     ) j ON j.clientid = c.clientid
-LEFT JOIN pool p ON p.poolid = j.poolid
-LEFT JOIN fileset f ON f.filesetid = j.filesetid;
+    LEFT JOIN pool p ON p.poolid = j.poolid
+    LEFT JOIN fileset f ON f.filesetid = j.filesetid;
 """)  # (12)
 
 
@@ -42,7 +42,7 @@ def default_to_regular(d):
         d = {k: default_to_regular(v) for k, v in iteritems(d)}
     return d
 
-
+    
 def all_backups():
     """List all jobs by client and fileset."""
     con = None
@@ -52,12 +52,14 @@ def all_backups():
         con = psycopg2.connect(database='bareos', user='bareos', host='phserver01')
         con.set_session(readonly=True)
         cur = con.cursor()
-        cur.execute("SELECT c.name, p.name, j.jobbytes, j.realendtime, j.starttime, j.jobfiles, f.fileset, \
-                     m.volumename, j.jobid \
-                     FROM client c, job j, fileset f, pool p, media m, jobmedia jm \
-                     WHERE j.jobstatus IN ('T', 'W') AND j.level IN ('F', 'I', 'D') AND j.type IN ('B', 'C') \
-                     AND j.clientid=c.clientid AND j.poolid=p.poolid AND j.filesetid=f.filesetid AND \
-                     jm.mediaid=m.mediaid AND jm.jobid=j.jobid;")
+        cur.execute("""
+            SELECT c.name, p.name, j.jobbytes, j.realendtime, j.starttime, j.jobfiles, f.fileset,
+            m.volumename, j.jobid
+            FROM client c, job j, fileset f, pool p, media m, jobmedia jm
+            WHERE j.jobstatus IN ('T', 'W') AND j.level IN ('F', 'I', 'D') AND j.type IN ('B', 'C')
+            AND j.clientid=c.clientid AND j.poolid=p.poolid AND j.filesetid=f.filesetid AND
+            jm.mediaid=m.mediaid AND jm.jobid=j.jobid;
+        """)
         tuples = cur.fetchall()
         total_size = float()
         for t in tuples:
@@ -99,7 +101,7 @@ def all_backups():
             for jpk, jpv in iteritems(jfv):
                 for jpe in jpv:
                     # outputs: (92, 85, '22.05.15 21:23', 16, 384467, 'Full-LT-0007')
-                    total_size += jpe[1]
+                    total_size += jpe[2]
                 jobs[jck][jfk][jpk] = sorted(jpv)
     jobs = OrderedDict(sorted(iteritems(jobs)))
     return {'jobs': jobs, 'hosts': hosts, 'total_size': total_size}

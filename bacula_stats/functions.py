@@ -29,14 +29,15 @@ def client_fileset_size(dict):
     gigabytes = float()
     for pk, pv in iteritems(dict):
         for t in pv:
-            gigabytes += t[1]
+            gigabytes += t[2]
     return "{0:.3f}".format(gigabytes/1024)
 
 
 def validate_yaml():
     CONFIGPATH = "/etc/bacula_stats.conf"
+
     if not os.path.isfile(CONFIGPATH):
-        log.error("Provide /etc/bacula_stats.conf. See example config on https://github.com/eayin2/bacula_stats. Exiting.")
+        log.error("Provide a /etc/bacula_stats.conf. Exiting.")
         sys.exit()
     with open((CONFIGPATH), "r") as stream:
         yaml_parsed = yaml.load(stream)
