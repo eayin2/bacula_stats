@@ -40,23 +40,26 @@ def validate_yaml():
         log.error("Provide a /etc/bacula_stats.conf. Exiting.")
         sys.exit()
     with open((CONFIGPATH), "r") as stream:
-        yaml_parsed = yaml.load(stream)
+        cf = yaml.load(stream)
     schema = Schema({
         Required('bacula_config_path'): str,
         Required('port'): int,
+        Required('db_name'): str,
+        Required('db_user'): str,
+        Required('db_host'): str,
         'timeouts': Schema({int: [str]})  # If timeouts not set, use default value.
     })
     try:
-        schema(yaml_parsed)
+        schema(cf)
     except MultipleInvalid as e:
         exc = e
         raise AssertionError(e)
-    return yaml_parsed
+    return cf
 
 
-yaml_parsed = validate_yaml()
-bacula_config_path = yaml_parsed["bacula_config_path"]
-port = str(yaml_parsed["port"])
+cf = validate_yaml()
+bacula_config_path = cf["bacula_config_path"]
+port = str(cf["port"])
 
 
 def bacula_config_files():

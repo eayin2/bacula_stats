@@ -11,13 +11,15 @@ import psycopg2
 from helputils.core import format_exception
 from six import iteritems
 
+sys.path.append("/etc/bacula-scripts")
 from .functions import client_pool_map, host_up, validate_yaml
+from general_conf import db_host, db_user, db_name
 
 logger = logging.getLogger(__name__)
 # Validating YAML and retrieving timeout setting. if there's no timeout setting we use a default value here.
-yaml_parsed = validate_yaml()
+cf = validate_yaml()
 try:
-    _timeouts = yaml_parsed["timeouts"]
+    _timeouts = cf["timeouts"]
 except:
     # setting timeouts as integer. later our code checks whether _timeouts is a dict or integer.
     _timeouts = 30
@@ -49,7 +51,7 @@ def all_backups():
     jobs = defaultdict(lambda: defaultdict(defaultdict))
     hosts = dict(host_up())
     try:
-        con = psycopg2.connect(database='bareos', user='bareos', host='phserver01')
+        con = psycopg2.connect(database=cf["db_name"], user=cf["db_user"], host=cf["db_host"])
         con.set_session(readonly=True)
         cur = con.cursor()
         cur.execute("""
@@ -113,7 +115,7 @@ def recent():
     config_copy_dep = dict(config_copy_dep)
     con = None
     try:
-        con = psycopg2.connect(database='bareos', user='bareos', host='phserver01')
+        con = psycopg2.connect(database=cf["db_name"], user=cf["db_user"], host=cf["db_host"])
         con.set_session(readonly=True)
         cur = con.cursor()
         cur.execute(recent_qry)
