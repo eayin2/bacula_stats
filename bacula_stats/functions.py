@@ -212,7 +212,7 @@ def host_up():
     _hosts = hosts()
     for ck, cv in iteritems(_hosts):
         for host in cv["host"]:
-            p2 = Popen(["/usr/bin/netcat", "-z", "-v", "-w", "2", host, port], stdout=PIPE, stderr=PIPE,
+            p2 = Popen(["netcat", "-z", "-v", "-w", "2", host, port], stdout=PIPE, stderr=PIPE,
                        universal_newlines=True)
             out, err = p2.communicate()
             if "succeeded" in err:

@@ -7,6 +7,7 @@ from termcolor import colored, cprint
 
 from .functions import gb_to_tb, client_fileset_size
 from .views import all_backups, recent
+from . import __version__
 
 
 def _all_backups():
@@ -73,19 +74,15 @@ def _recent():
         print("\n")
 
 
-class MyParser(argparse.ArgumentParser):
-    def error(self, message):
-        sys.stderr.write('error: %s\n' % message)
-        self.print_help()
-        sys.exit(2)
-
-
 def clidoor():
-    parser = MyParser(description="bacula_stats - Display recent and all backups.")
+    parser = argparse.ArgumentParser(description="bacula_stats %s - Display recent and all backups." % __version__)
     parser.add_argument("-a", "--all", action="store_true", help="Return all backups.", required=False)
     parser.add_argument("-r", "--recent", action="store_true", help="Return recent backups", required=False)
+    parser.add_argument('--version', action='version', version='%(prog)s {}'.format(__version__))
     args = vars(parser.parse_args())
     if args["recent"]:
         _recent()
     elif args["all"]:
         _all_backups()
+    else:
+        parser.print_help()
