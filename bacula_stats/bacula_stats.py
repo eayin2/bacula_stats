@@ -32,8 +32,6 @@ def _all_backups():
                     li.append(x)
             print(tabulate(li, headers=["Pool", "JobId", "Size", "Ended", "Duration", "Files (#)", "Volume name"]))
             print("\n")
-        print(". . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .")
-        print("\n")
 
 
 def _recent():
@@ -41,7 +39,7 @@ def _recent():
     r = recent()
     jobs = r["jobs"]
     hosts = r["hosts"]
-    print("Recent jobs:\n\n")
+    print("Recent backups:\n")
     for jck, jcv in iteritems(jobs):
         print(colored(jck, "white", attrs=["bold"]))
         print("\n")
@@ -70,8 +68,6 @@ def _recent():
                     li.append([pool] + [x for i, x in enumerate(jpv) if not i == 4])
             print(tabulate(li, headers=["Pool", "Size", "Ended", "Duration", "Files (#)"]))
             print("\n")
-        print(". . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .")
-        print("\n")
 
 
 def clidoor():

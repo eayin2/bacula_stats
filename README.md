@@ -39,3 +39,7 @@ function bstats() {
 ```
 
 To print the most recent backups use for example `bacula_stats -r` or with using the above bash wrapper `bstats -r`
+
+
+## Example output
+![Alt text](http://i.imgur.com/NYhlIrM.png "web-ui")
