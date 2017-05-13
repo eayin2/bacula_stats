@@ -42,4 +42,4 @@ To print the most recent backups use for example `bacula_stats -r` or with using
 
 
 ## Example output
-![Alt text](http://i.imgur.com/NYhlIrM.png "web-ui")
+![Alt text](http://i.imgur.com/NYhlIrM.png "CLI example output `bacula_stats -r`")
