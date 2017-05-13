@@ -73,8 +73,15 @@ def _recent():
         print("\n")
 
 
+class MyParser(argparse.ArgumentParser):
+    def error(self, message):
+        sys.stderr.write('error: %s\n' % message)
+        self.print_help()
+        sys.exit(2)
+
+
 def clidoor():
-    parser = argparse.ArgumentParser(description="bacula_stats - Display recent and all backups.")
+    parser = MyParser(description="bacula_stats - Display recent and all backups.")
     parser.add_argument("-a", "--all", action="store_true", help="Return all backups.", required=False)
     parser.add_argument("-r", "--recent", action="store_true", help="Return recent backups", required=False)
     args = vars(parser.parse_args())

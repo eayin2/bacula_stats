@@ -12,7 +12,7 @@ from collections import defaultdict
 import fnmatch
 import yaml
 import psycopg2
-from helputils.core import log
+from helputils.defaultlog import log
 from six import iteritems
 from voluptuous import Schema, Required, All, Length, Range, MultipleInvalid
 

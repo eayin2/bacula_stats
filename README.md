@@ -9,6 +9,8 @@ bacula_stats to print all backups to the console.
 bacula_stats is the CLI version of bacula_monitor. It is easier deployable, distributable and more secure than
 bacula_monitor.
 
+## Requirements
+Install with your distro's package manager `netcat`
 
 ## Install
 `pip3 install bacula_stats`
@@ -31,8 +33,9 @@ Preferably pipe bacula_stats to `less` to scroll conveniently through your backu
 `bacula_stats |less -R --tilde`
 In your .bashrc put:
 ```
-function bacula_stats() {
-  /usr/bin/bacula_stats "$@" | less --tilde -R
+function bstats() {
+  bacula_stats "$@" | less --tilde -R
 }
 ```
 
+To print the most recent backups use for example `bacula_stats -r` or with using the above bash wrapper `bstats -r`
